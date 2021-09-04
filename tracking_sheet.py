@@ -83,7 +83,7 @@ class Sheet:
                     break
                 cellNum += 1
         if (balanceCell != 2):
-            return self.wb.active.cell(balanceCell - 1, 7).value
+            return round(self.wb.active.cell(balanceCell - 1, 7).value, 2)
         else:
             return 0
 

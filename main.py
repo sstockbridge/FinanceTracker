@@ -14,7 +14,7 @@ sheet1 = tracking_sheet.Sheet()
 sg.theme('Dark Blue 3') 
 
 balance = sheet1.getBalance()
-layout = [[sg.Text('Finance Tracker', font="Times", size = (45, 0), justification = 'center')],
+layout = [[sg.Text('Finance Tracker', font=("Times", 14, "bold"), size = (45, 0), justification = 'center')],
           [sg.Text('Month', font="Times"), sg.Input(key='-M-')],
           [sg.Text('Day', font="Times"), sg.Input(key='-D-')],
           [sg.Text('Title', font="Times"), sg.Input(key='-T-')],
@@ -47,13 +47,12 @@ while True:  # Event Loop
         if (values['-A-'] == ''):
             print("Missing Amount")
             error = True
+        # Check if amount is int, float, or neither
         try:
             val = int(values['-A-'])
-            print("Amount is a valid number")
         except ValueError:
             try:
                 val = float(values['-A-'])
-                print("Amount is a valid fp number")
             except:
                 print("Enter a valid number")
                 error = True
@@ -90,14 +89,18 @@ while True:  # Event Loop
                 break
         
     if event == 'Income/Expense Summary':
+        # Function that calculates the actual values of the category sums based on their percentages
+        def absolute_value(val):
+            a  = np.round(val/100.*sum(catSums.values()), 0)
+            return a
         catSums = sheet1.getCategorySums(income=True)
         fig, (ax1, ax2) = mpl.subplots(1, 2)
         fig.set_size_inches(15, 7)
         fig.suptitle("Income and Expense Summary Since " + sheet1.getStartDate())
-        ax1.pie(catSums.values(), labels=catSums.keys(), autopct='%1.1f%%')
+        ax1.pie(catSums.values(), labels=catSums.keys(), autopct=absolute_value)
         ax1.title.set_text("Income Summary")
         catSums = sheet1.getCategorySums(income=False)
-        ax2.pie(catSums.values(), labels=catSums.keys(), autopct='%1.1f%%')
+        ax2.pie(catSums.values(), labels=catSums.keys(), autopct=absolute_value)
         ax2.title.set_text("Expenses")
         mpl.show()
     
